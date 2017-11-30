@@ -9,8 +9,14 @@ namespace SpriteFree.Core {
 
         private Dictionary<Texture, HashSet<Object>> references = new Dictionary<Texture, HashSet<Object>>();
 
+        private bool isDirty;
+
         public static TextureGarbageCollector Instance {
             get {
+                if (!Application.isPlaying) {
+                    return null;
+                }
+
                 if (instance != null) {
                     return instance;
                 }
@@ -20,6 +26,28 @@ namespace SpriteFree.Core {
                 instance = textureCollectorGameObject.AddComponent<TextureGarbageCollector>();
                 return instance;
             }
+        }
+
+        public bool IsDirty => this.isDirty;
+
+        public void GetReferences(out Texture[] textures, out Object[][] objects) {
+            textures = new Texture[this.references.Count];
+            objects = new Object[this.references.Count][];
+            int i = 0;
+            foreach (KeyValuePair<Texture, HashSet<Object>> keyValuePair in this.references) {
+                textures[i] = keyValuePair.Key;
+                HashSet<Object> texReferences = keyValuePair.Value;
+                objects[i] = new Object[texReferences.Count];
+                int j = 0;
+                foreach (Object texReference in texReferences) {
+                    objects[i][j] = texReference;
+                    j++;
+                }
+
+                i++;
+            }
+
+            this.isDirty = false;
         }
 
         public void Add(Texture texture, Object obj) {
@@ -37,6 +65,7 @@ namespace SpriteFree.Core {
             }
 
             texReferences.Add(obj);
+            this.isDirty = true;
         }
 
         public void Remove(Texture texture, Object obj) {
@@ -58,6 +87,7 @@ namespace SpriteFree.Core {
 
             this.references.Remove(texture);
             Resources.UnloadAsset(texture);
+            this.isDirty = true;
         }
 
     }
