@@ -9,6 +9,8 @@ namespace SpriteFree.Core {
 
         private Dictionary<Texture, HashSet<Object>> references = new Dictionary<Texture, HashSet<Object>>();
 
+        private bool isDirty;
+
         public static TextureGarbageCollector Instance {
             get {
                 if (!Application.isPlaying) {
@@ -26,6 +28,10 @@ namespace SpriteFree.Core {
             }
         }
 
+        public bool IsDirty => this.isDirty;
+
+        public Texture[]
+
         public void Add(Texture texture, Object obj) {
             if (this.references == null) {
                 this.references = new Dictionary<Texture, HashSet<Object>>();
@@ -41,6 +47,7 @@ namespace SpriteFree.Core {
             }
 
             texReferences.Add(obj);
+            this.isDirty = true;
         }
 
         public void Remove(Texture texture, Object obj) {
@@ -62,6 +69,7 @@ namespace SpriteFree.Core {
 
             this.references.Remove(texture);
             Resources.UnloadAsset(texture);
+            this.isDirty = true;
         }
 
     }
