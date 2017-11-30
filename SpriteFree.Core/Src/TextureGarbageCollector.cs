@@ -11,6 +11,10 @@ namespace SpriteFree.Core {
 
         public static TextureGarbageCollector Instance {
             get {
+                if (!Application.isPlaying) {
+                    return null;
+                }
+
                 if (instance != null) {
                     return instance;
                 }
