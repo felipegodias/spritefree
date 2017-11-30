@@ -44,5 +44,12 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SpriteFree.Core\SpriteFree.Core.csproj">
+      <Project>{dcb7e4a4-e81f-49d0-bd95-b1f678a3766f}</Project>
+      <Name>SpriteFree.Core</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
