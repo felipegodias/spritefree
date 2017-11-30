@@ -30,7 +30,25 @@ namespace SpriteFree.Core {
 
         public bool IsDirty => this.isDirty;
 
-        public Texture[]
+        public void GetReferences(out Texture[] textures, out Object[][] objects) {
+            textures = new Texture[this.references.Count];
+            objects = new Object[this.references.Count][];
+            int i = 0;
+            foreach (KeyValuePair<Texture, HashSet<Object>> keyValuePair in this.references) {
+                textures[i] = keyValuePair.Key;
+                HashSet<Object> texReferences = keyValuePair.Value;
+                objects[i] = new Object[texReferences.Count];
+                int j = 0;
+                foreach (Object texReference in texReferences) {
+                    objects[i][j] = texReference;
+                    j++;
+                }
+
+                i++;
+            }
+
+            this.isDirty = false;
+        }
 
         public void Add(Texture texture, Object obj) {
             if (this.references == null) {
