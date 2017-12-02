@@ -39,20 +39,99 @@ namespace SpriteFree.Core.Editor {
                 return;
             }
 
-            this.scroll = GUILayout.BeginScrollView(this.scroll);
+            float screenView = 0.75f;
+            int texturesScreenSize = (int)(Screen.width * screenView);
+            int referencesScreenSize = (int)(Screen.width * (1 - screenView));
+
+            this.DrawTitles(texturesScreenSize, referencesScreenSize);
+
+            EditorGUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
+
+            EditorGUILayout.BeginVertical(GUILayout.Width(texturesScreenSize));
+
+            this.DrawTextureList(texturesScreenSize);
+
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.BeginVertical(GUILayout.Width(referencesScreenSize));
+
+            this.DrawReferenceList();
+
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.EndHorizontal();
+
+        }
+
+        private void DrawTitles(int texturesScreenSize, int referencesScreenSize) {
+            EditorGUILayout.BeginHorizontal();
+
+            GUIContent textureName = new GUIContent(" Texture Name");
+            Rect textureNameRect = GUILayoutUtility.GetRect(textureName, EditorStyles.label, GUILayout.Width(texturesScreenSize * 0.6f));
+            EditorGUI.LabelField(textureNameRect, textureName);
+
+            GUIContent memory = new GUIContent(" Memory");
+            Rect memoryRect = GUILayoutUtility.GetRect(memory, EditorStyles.label, GUILayout.Width(texturesScreenSize * 0.2f));
+            EditorGUI.LabelField(memoryRect, memory);
+            memoryRect.y -= 1;
+            memoryRect.width = 1;
+            memoryRect.height += 3;
+            EditorGUI.DrawRect(memoryRect, Color.black);
+
+            GUIContent refCount = new GUIContent(" Ref Count");
+            Rect refCountRect = GUILayoutUtility.GetRect(refCount, EditorStyles.label, GUILayout.Width(texturesScreenSize * 0.2f));
+            EditorGUI.LabelField(refCountRect, refCount);
+
+            refCountRect.y -= 1;
+            refCountRect.width = 1;
+            refCountRect.height += 3;
+            EditorGUI.DrawRect(refCountRect, Color.black);
+
+            GUIContent referencedBy = new GUIContent(" Referenced By:");
+            Rect referencedByRect = GUILayoutUtility.GetRect(referencedBy, EditorStyles.label, GUILayout.Width(referencesScreenSize));
+            EditorGUI.LabelField(referencedByRect, referencedBy);
+
+            referencedByRect.y -= 1;
+            referencedByRect.width = 1;
+            referencedByRect.height += 3;
+            EditorGUI.DrawRect(referencedByRect, Color.black);
+
+            EditorGUILayout.EndHorizontal();
+
+            Rect lineRect = GUILayoutUtility.GetRect(Screen.width, Screen.width, 1, 1);
+            EditorGUI.DrawRect(lineRect, Color.black);
+        }
+
+        private void DrawTextureList(int screenSize) {
+            this.scroll = GUILayout.BeginScrollView(this.scroll, GUILayout.Width(screenSize + 16));
 
             for (int i = 0; i < this.textures.Length; i++) {
                 Texture texture = this.textures[i];
-                EditorGUILayout.LabelField(texture.name);
-                Object[] texReferences = this.objects[i];
-                EditorGUI.indentLevel++;
-                foreach (Object texReference in texReferences) {
-                    EditorGUILayout.LabelField(texReference.name);
-                }
-                EditorGUI.indentLevel--;
+                GUIContent content = new GUIContent();
+                Rect rect = GUILayoutUtility.GetRect(content, EditorStyles.label, GUILayout.Width(screenSize));
+                rect.x -= 3;
+                rect.y -= 2;
+                rect.width += 15;
+                GUIStyle guiStyle = i % 2 == 0 ? TGCStyles.LabelEven : TGCStyles.LabelOdd;
+                EditorGUI.LabelField(rect, content, guiStyle);
+
+                Rect textureNameRect = new Rect(rect.x + 3, rect.y, rect.width * 0.6f, rect.height);
+                EditorGUI.LabelField(textureNameRect, " " + texture.name);
+
+                Rect memoryRect = new Rect(rect.x + rect.width * 0.6f, rect.y, rect.width * 0.2f, rect.height);
+                EditorGUI.LabelField(memoryRect, " --");
+
+                Rect refCountRect = new Rect(rect.x + rect.width * 0.8f, rect.y, rect.width * 0.2f, rect.height);
+                Object[] objs = this.objects[i];
+                EditorGUI.LabelField(refCountRect, " " + objs.Length);
+
             }
 
             GUILayout.EndScrollView();
+        }
+
+        private void DrawReferenceList() {
+            
         }
 
     }
