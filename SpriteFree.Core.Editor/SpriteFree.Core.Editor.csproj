@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Src\TextureGarbageCollectorWindow.cs" />
+    <Compile Include="Src\TGCStyles.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SpriteFree.Core\SpriteFree.Core.csproj">
