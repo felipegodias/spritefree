@@ -11,6 +11,10 @@ namespace SpriteFree.Core.Editor {
 
         private Object[][] objects;
 
+        private Texture selectedTexture;
+
+        private Object selectedObject;
+
         private Vector2 scroll;
 
         [MenuItem("Window/Texture Garbage Collector")]
@@ -93,7 +97,7 @@ namespace SpriteFree.Core.Editor {
 
             referencedByRect.y -= 1;
             referencedByRect.width = 1;
-            referencedByRect.height += 3;
+            referencedByRect.height = Screen.height;
             EditorGUI.DrawRect(referencedByRect, Color.black);
 
             EditorGUILayout.EndHorizontal();
@@ -113,7 +117,9 @@ namespace SpriteFree.Core.Editor {
                 rect.y -= 2;
                 rect.width += 15;
                 GUIStyle guiStyle = i % 2 == 0 ? TGCStyles.LabelEven : TGCStyles.LabelOdd;
-                EditorGUI.LabelField(rect, content, guiStyle);
+                if (Event.current.type == EventType.Repaint) {
+                    guiStyle.Draw(rect, content, false, false, this.selectedTexture == texture, false);
+                }
 
                 Rect textureNameRect = new Rect(rect.x + 3, rect.y, rect.width * 0.6f, rect.height);
                 EditorGUI.LabelField(textureNameRect, " " + texture.name);
@@ -125,13 +131,38 @@ namespace SpriteFree.Core.Editor {
                 Object[] objs = this.objects[i];
                 EditorGUI.LabelField(refCountRect, " " + objs.Length);
 
+                if (GUI.Button(rect, "", new GUIStyle())) {
+                    this.selectedTexture = texture;
+                }
             }
 
             GUILayout.EndScrollView();
         }
 
         private void DrawReferenceList() {
-            
+
+            if (this.selectedTexture == null) {
+                return;
+            }
+
+            int index = -1;
+            for (int i = 0; i < this.textures.Length; i++) {
+                if (this.selectedTexture == this.textures[i]) {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index == -1) {
+                return;
+            }
+
+            Object[] objs = this.objects[index];
+
+            foreach (Object o in objs) {
+                EditorGUILayout.LabelField(o.name);
+            }
+
         }
 
     }
