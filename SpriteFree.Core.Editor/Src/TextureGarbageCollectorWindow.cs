@@ -133,6 +133,7 @@ namespace SpriteFree.Core.Editor {
 
                 if (GUI.Button(rect, "", new GUIStyle())) {
                     this.selectedTexture = texture;
+                    Selection.SetActiveObjectWithContext(this.selectedTexture, this.selectedTexture);
                 }
             }
 
