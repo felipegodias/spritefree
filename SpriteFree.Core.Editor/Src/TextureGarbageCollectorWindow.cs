@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace SpriteFree.Core.Editor {
 
@@ -132,7 +133,10 @@ namespace SpriteFree.Core.Editor {
                 EditorGUI.LabelField(textureNameRect, " " + texture.name);
 
                 Rect memoryRect = new Rect(rect.x + rect.width * 0.6f, rect.y, rect.width * 0.2f, rect.height);
-                EditorGUI.LabelField(memoryRect, " --");
+
+                long memo = Profiler.GetRuntimeMemorySizeLong(this.textures[i]);
+                string memoText = this.FormatBytes(memo);
+                EditorGUI.LabelField(memoryRect, " " + memoText);
 
                 Rect refCountRect = new Rect(rect.x + rect.width * 0.8f, rect.y, rect.width * 0.2f, rect.height);
                 Object[] objs = this.objects[i];
@@ -169,6 +173,19 @@ namespace SpriteFree.Core.Editor {
             foreach (Object o in objs) {
                 EditorGUILayout.LabelField(o.name);
             }
+        }
+
+        private string FormatBytes(long len) {
+            string[] sizes = {
+                "B", "KB", "MB", "GB", "TB"
+            };
+            int order = 0;
+            while (len >= 1024 && order < sizes.Length - 1) {
+                order++;
+                len = len / 1024;
+            }
+
+            return string.Format("{0:0.##} {1}", len, sizes[order]);
         }
 
     }
