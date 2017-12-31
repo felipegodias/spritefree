@@ -39,8 +39,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Src\TextureGarbageCollectorTracker.cs" />
-    <Compile Include="Src\SpriteRendererTGCTracker.cs" />
+    <Compile Include="Src\Modules\ITrackModule.cs" />
+    <Compile Include="Src\Modules\SpriteRendererTrackModule.cs" />
+    <Compile Include="Src\TGCTracker.cs" />
     <Compile Include="Src\TextureGarbageCollector.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

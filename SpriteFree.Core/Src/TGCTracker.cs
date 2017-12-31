@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using SpriteFree.Core.Modules;
+using UnityEngine;
 
 namespace SpriteFree.Core {
 
-    public abstract class TextureGarbageCollectorTracker : MonoBehaviour {
+    public class TGCTracker : MonoBehaviour {
 
         [SerializeField]
         private bool clearTextureOnDestroy;
@@ -10,7 +11,12 @@ namespace SpriteFree.Core {
         [SerializeField]
         private bool clearTextureOnDisable;
 
+        [SerializeField]
+        private bool clearTextureOnInvisible;
+
         private TextureGarbageCollector textureGarbageCollector;
+
+        private ITrackModule trackModule;
 
         private Texture lastUsedTexture;
 
@@ -18,13 +24,17 @@ namespace SpriteFree.Core {
 
         public bool ClearTextureOnDisable => this.clearTextureOnDisable;
 
+        public bool ClearTextureOnInvisible => this.clearTextureOnInvisible;
+
         protected TextureGarbageCollector TextureGarbageCollector =>
             this.textureGarbageCollector ?? (this.textureGarbageCollector = TextureGarbageCollector.Instance);
 
-        protected abstract Texture Texture { get; }
+        private void Awake() {
+            this.LoadModule();
+        }
 
         private void LateUpdate() {
-            Texture texture = this.Texture;
+            Texture texture = this.trackModule.Texture;
             if (this.lastUsedTexture == texture) {
                 return;
             }
@@ -48,7 +58,6 @@ namespace SpriteFree.Core {
             }
 
             this.TextureGarbageCollector.Remove(this.lastUsedTexture, this);
-            this.lastUsedTexture = null;
         }
 
         private void OnDisable() {
@@ -57,7 +66,32 @@ namespace SpriteFree.Core {
             }
 
             this.TextureGarbageCollector.Remove(this.lastUsedTexture, this);
-            this.lastUsedTexture = null;
+        }
+
+        private void OnBecameVisible() {
+            if (!this.ClearTextureOnInvisible || this.lastUsedTexture == null) {
+                return;
+            }
+
+            this.lastUsedTexture =  this.trackModule.Texture;
+            this.TextureGarbageCollector.Add(this.lastUsedTexture, this);
+            this.trackModule.Reload();
+        }
+
+        private void OnBecameInvisible() {
+            if (!this.ClearTextureOnInvisible || this.lastUsedTexture == null) {
+                return;
+            }
+
+            this.TextureGarbageCollector.Remove(this.lastUsedTexture, this);
+        }
+
+        private void LoadModule() {
+            SpriteRenderer spriteRenderer = this.GetComponent<SpriteRenderer>();
+            if (spriteRenderer != null) {
+                this.trackModule = new SpriteRendererTrackModule(spriteRenderer);
+                return;
+            }
         }
 
     }
