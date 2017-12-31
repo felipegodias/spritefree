@@ -12,6 +12,12 @@ namespace SpriteFree.Core.Modules {
             this.spriteRenderer = spriteRenderer;
         }
 
+        public void Reload() {
+            Sprite sprite = this.spriteRenderer.sprite;
+            this.spriteRenderer.sprite = null;
+            this.spriteRenderer.sprite = sprite;
+        }
+
     }
 
 }

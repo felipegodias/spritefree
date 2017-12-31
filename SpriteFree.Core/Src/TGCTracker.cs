@@ -11,6 +11,9 @@ namespace SpriteFree.Core {
         [SerializeField]
         private bool clearTextureOnDisable;
 
+        [SerializeField]
+        private bool clearTextureOnInvisible;
+
         private TextureGarbageCollector textureGarbageCollector;
 
         private ITrackModule trackModule;
@@ -20,6 +23,8 @@ namespace SpriteFree.Core {
         public bool ClearTextureOnDestroy => this.clearTextureOnDestroy;
 
         public bool ClearTextureOnDisable => this.clearTextureOnDisable;
+
+        public bool ClearTextureOnInvisible => this.clearTextureOnInvisible;
 
         protected TextureGarbageCollector TextureGarbageCollector =>
             this.textureGarbageCollector ?? (this.textureGarbageCollector = TextureGarbageCollector.Instance);
@@ -53,7 +58,6 @@ namespace SpriteFree.Core {
             }
 
             this.TextureGarbageCollector.Remove(this.lastUsedTexture, this);
-            this.lastUsedTexture = null;
         }
 
         private void OnDisable() {
@@ -62,7 +66,24 @@ namespace SpriteFree.Core {
             }
 
             this.TextureGarbageCollector.Remove(this.lastUsedTexture, this);
-            this.lastUsedTexture = null;
+        }
+
+        private void OnBecameVisible() {
+            if (!this.ClearTextureOnInvisible || this.lastUsedTexture == null) {
+                return;
+            }
+
+            this.lastUsedTexture =  this.trackModule.Texture;
+            this.TextureGarbageCollector.Add(this.lastUsedTexture, this);
+            this.trackModule.Reload();
+        }
+
+        private void OnBecameInvisible() {
+            if (!this.ClearTextureOnInvisible || this.lastUsedTexture == null) {
+                return;
+            }
+
+            this.TextureGarbageCollector.Remove(this.lastUsedTexture, this);
         }
 
         private void LoadModule() {

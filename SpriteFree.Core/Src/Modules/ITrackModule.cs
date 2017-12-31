@@ -6,6 +6,8 @@ namespace SpriteFree.Core.Modules {
 
         Texture Texture { get; }
 
+        void Reload();
+
     }
 
 }
