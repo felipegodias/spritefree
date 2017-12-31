@@ -22,6 +22,10 @@ namespace SpriteFree.Core.Editor {
             GetWindow<TextureGarbageCollectorWindow>(false, "Texture GC");
         }
 
+        private void Update() {
+            this.Repaint();
+        }
+
         private void OnGUI() {
             this.textureGarbageCollector = TextureGarbageCollector.Instance;
 
@@ -44,8 +48,8 @@ namespace SpriteFree.Core.Editor {
             }
 
             float screenView = 0.75f;
-            int texturesScreenSize = (int)(Screen.width * screenView);
-            int referencesScreenSize = (int)(Screen.width * (1 - screenView));
+            int texturesScreenSize = (int) (Screen.width * screenView);
+            int referencesScreenSize = (int) (Screen.width * (1 - screenView));
 
             this.DrawTitles(texturesScreenSize, referencesScreenSize);
 
@@ -64,18 +68,19 @@ namespace SpriteFree.Core.Editor {
             EditorGUILayout.EndVertical();
 
             EditorGUILayout.EndHorizontal();
-
         }
 
         private void DrawTitles(int texturesScreenSize, int referencesScreenSize) {
             EditorGUILayout.BeginHorizontal();
 
             GUIContent textureName = new GUIContent(" Texture Name");
-            Rect textureNameRect = GUILayoutUtility.GetRect(textureName, EditorStyles.label, GUILayout.Width(texturesScreenSize * 0.6f));
+            Rect textureNameRect = GUILayoutUtility.GetRect(textureName, EditorStyles.label,
+                GUILayout.Width(texturesScreenSize * 0.6f));
             EditorGUI.LabelField(textureNameRect, textureName);
 
             GUIContent memory = new GUIContent(" Memory");
-            Rect memoryRect = GUILayoutUtility.GetRect(memory, EditorStyles.label, GUILayout.Width(texturesScreenSize * 0.2f));
+            Rect memoryRect =
+                GUILayoutUtility.GetRect(memory, EditorStyles.label, GUILayout.Width(texturesScreenSize * 0.2f));
             EditorGUI.LabelField(memoryRect, memory);
             memoryRect.y -= 1;
             memoryRect.width = 1;
@@ -83,7 +88,8 @@ namespace SpriteFree.Core.Editor {
             EditorGUI.DrawRect(memoryRect, Color.black);
 
             GUIContent refCount = new GUIContent(" Ref Count");
-            Rect refCountRect = GUILayoutUtility.GetRect(refCount, EditorStyles.label, GUILayout.Width(texturesScreenSize * 0.2f));
+            Rect refCountRect = GUILayoutUtility.GetRect(refCount, EditorStyles.label,
+                GUILayout.Width(texturesScreenSize * 0.2f));
             EditorGUI.LabelField(refCountRect, refCount);
 
             refCountRect.y -= 1;
@@ -92,7 +98,8 @@ namespace SpriteFree.Core.Editor {
             EditorGUI.DrawRect(refCountRect, Color.black);
 
             GUIContent referencedBy = new GUIContent(" Referenced By:");
-            Rect referencedByRect = GUILayoutUtility.GetRect(referencedBy, EditorStyles.label, GUILayout.Width(referencesScreenSize));
+            Rect referencedByRect =
+                GUILayoutUtility.GetRect(referencedBy, EditorStyles.label, GUILayout.Width(referencesScreenSize));
             EditorGUI.LabelField(referencedByRect, referencedBy);
 
             referencedByRect.y -= 1;
@@ -141,7 +148,6 @@ namespace SpriteFree.Core.Editor {
         }
 
         private void DrawReferenceList() {
-
             if (this.selectedTexture == null) {
                 return;
             }
@@ -163,7 +169,6 @@ namespace SpriteFree.Core.Editor {
             foreach (Object o in objs) {
                 EditorGUILayout.LabelField(o.name);
             }
-
         }
 
     }
